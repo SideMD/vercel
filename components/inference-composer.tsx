@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 
-type Provider = "gemini" | "perplexity" | "claude" | "nvidia" | "modal";
+type Provider = "gemini" | "perplexity" | "claude" | "nvidia" | "modal" | "modal_glm";
 type Result = { text: string; model: string; citations?: string[]; kind?: string };
 type Status = Record<Provider, boolean>;
 
@@ -12,6 +12,7 @@ const providers: { key: Provider; label: string; type: string }[] = [
   { key: "claude", label: "Anthropic Claude", type: "AI API" },
   { key: "nvidia", label: "NVIDIA NIM", type: "AI API" },
   { key: "modal", label: "Modal", type: "CPU compute probe" },
+  { key: "modal_glm", label: "Modal · GLM 5.3 Flash", type: "Shared AI API · per token" },
 ];
 
 export default function InferenceComposer({ enabled, status }: {
