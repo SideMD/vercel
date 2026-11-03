@@ -1,4 +1,5 @@
 import MessageComposer from "@/components/message-composer";
+import InferenceComposer from "@/components/inference-composer";
 import { getSql } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
@@ -173,6 +174,27 @@ export default async function Home() {
           <span>Health endpoint: <code>/api/health</code></span>
           <span>This demo does not replace your personal MESSAGE LINE.</span>
         </div>
+      </section>
+
+      <section id="ai-workspaces" className="demoSection providerSection">
+        <div className="sectionTop">
+          <div>
+            <div className="eyebrow mini">WORKSPACES / ON DEMAND</div>
+            <h2>Bring intelligence into the meeting.</h2>
+            <p>Gemini and Perplexity remain external resources. Your Side stays yours.</p>
+          </div>
+        </div>
+        <article className="surface providerSurface">
+          <div className="surfaceTop">
+            <span className="surfaceNumber">C / PROCESSING</span>
+            <span className="liveMark">GEMINI · PERPLEXITY</span>
+          </div>
+          <h3>Ask an AI workspace.</h3>
+          <p className="surfaceDescription">
+            Optional server-side access through keys configured on Vercel. No provider credentials are sent to the browser.
+          </p>
+          <InferenceComposer enabled={Boolean(process.env.SIDE_INFERENCE_GATE_KEY)} />
+        </article>
       </section>
 
       <section className="closing">
