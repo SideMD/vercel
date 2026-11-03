@@ -149,3 +149,11 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
  .formFooter small { max-width:100%; }
  .footer { flex-direction:column; }
 }
+
+.messageForm select { width: 100%; background: #091219; border: 1px solid #2d414d; border-radius: 9px; color: var(--text); padding: 12px; font-size: 13px; }
+.providerSection { padding-top: 45px; }
+.providerSurface { min-height: 0; padding-bottom: 36px; }
+.aiResult { margin-top: 8px; padding: 18px; background: #091219; border: 1px solid #23536a; border-radius: 12px; color: #c2d5df; }
+.aiResult > strong { font-size: 12px; color: var(--blue-bright); }
+.aiResult p { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 13px; line-height: 1.7; }
+.aiResult a { display: block; overflow-wrap: anywhere; font-size: 11px; color: #65b7e0; margin: 6px 0; }
