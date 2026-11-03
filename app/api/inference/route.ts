@@ -98,8 +98,8 @@ export async function POST(request: Request) {
       });
     } else {
       const endpoint = modalEndpoint();
-      const id = process.env.MODAL_TOKEN_ID;
-      const secret = process.env.MODAL_TOKEN_SECRET;
+      const id = process.env.MODAL_PROXY_KEY;
+      const secret = process.env.MODAL_PROXY_SECRET;
       if (!endpoint || !id || !secret) return jsonError("modal_endpoint_or_auth_not_connected", 503, selected);
       model = "modal-sideup-probe";
       response = await fetch(endpoint.toString(), {
