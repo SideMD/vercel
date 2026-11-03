@@ -5,7 +5,7 @@ import { useState, type FormEvent } from "react";
 
 export default function MessageComposer({ enabled }: { enabled: boolean }) {
   const router = useRouter();
-  const [author, setAuthor] = useState("Daniel");
+  const [author, setAuthor] = useState("Guest");
   const [body, setBody] = useState("");
   const [key, setKey] = useState("");
   const [sending, setSending] = useState(false);
@@ -29,16 +29,16 @@ export default function MessageComposer({ enabled }: { enabled: boolean }) {
 
       if (!response.ok) {
         setFeedback(response.status === 401
-          ? "Chave de escrita inválida."
-          : "A mensagem não foi gravada. Confere o Neon, o schema e a chave.");
+          ? "Invalid demo write key."
+          : "Not saved. Check Neon, the schema and your write key.");
         return;
       }
 
       setBody("");
-      setFeedback("Mensagem registrada no Neon.");
+      setFeedback("Message saved to Neon.");
       router.refresh();
     } catch {
-      setFeedback("Conexão indisponível. Tenta novamente.");
+      setFeedback("Connection unavailable. Try again.");
     } finally {
       setSending(false);
     }
@@ -48,22 +48,22 @@ export default function MessageComposer({ enabled }: { enabled: boolean }) {
     <form className="messageForm" onSubmit={send}>
       <div className="formTwo">
         <label>
-          <span>Autor</span>
-          <input aria-label="Autor da mensagem" value={author} onChange={(e) => setAuthor(e.target.value)} maxLength={40} required disabled={!enabled} />
+          <span>Author</span>
+          <input aria-label="Message author" value={author} onChange={(e) => setAuthor(e.target.value)} maxLength={40} required disabled={!enabled} />
         </label>
         <label>
-          <span>Chave de escrita da demo</span>
-          <input aria-label="Chave de escrita" type="password" autoComplete="off" value={key} onChange={(e) => setKey(e.target.value)} required disabled={!enabled} placeholder="Configurada na Vercel" />
+          <span>Demo write key</span>
+          <input aria-label="Write key" type="password" autoComplete="off" value={key} onChange={(e) => setKey(e.target.value)} required disabled={!enabled} placeholder="Configured on Vercel" />
         </label>
       </div>
       <label>
-        <span>Mensagem</span>
-        <textarea aria-label="Mensagem" value={body} onChange={(e) => setBody(e.target.value)} maxLength={280} rows={3} required disabled={!enabled} placeholder="Um pensamento para testar o caminho SideUp → Neon…" />
+        <span>Message</span>
+        <textarea aria-label="Message" value={body} onChange={(e) => setBody(e.target.value)} maxLength={280} rows={3} required disabled={!enabled} placeholder="A message to test SideUp → Neon…" />
       </label>
       <div className="formFooter">
-        <small>Protótipo de mensagens. Não envia áudio pessoal nem cria INSIDEOUT automaticamente.</small>
+        <small>Prototype messages only. No private audio or automatic INSIDEOUT creation.</small>
         <button className="primaryButton" disabled={!enabled || sending || !body.trim() || !key || !author.trim()} type="submit">
-          {sending ? "Enviando…" : "Registrar mensagem"}
+          {sending ? "Sending…" : "Save message"}
           <span aria-hidden="true">↗</span>
         </button>
       </div>
