@@ -50,10 +50,10 @@ async function readDemo(): Promise<DemoState> {
 }
 
 const explanations = {
-  unconfigured: "Neon ainda não está vinculado a este deployment.",
-  offline: "Neon configurado, mas a consulta não respondeu.",
-  schema: "Neon respondeu. Falta executar db/schema.sql no SQL Editor.",
-  connected: "Conexão real com Neon estabelecida.",
+  unconfigured: "Neon is not yet linked to this deployment.",
+  offline: "Neon is configured, but the query did not respond.",
+  schema: "Neon responded. Run db/schema.sql in the SQL Editor.",
+  connected: "Live Neon database connection established.",
 };
 
 export default async function Home() {
@@ -74,14 +74,14 @@ export default async function Home() {
       </header>
 
       <section className="hero">
-        <div className="eyebrow"><span className="signal" /> UM ESPAÇO DA PESSOA</div>
-        <h1>A sua Side.<br /><span>A sua MinD.</span></h1>
+        <div className="eyebrow"><span className="signal" /> A SPACE FOR THE PERSON</div>
+        <h1>Your Side.<br /><span>Your MinD.</span></h1>
         <p className="heroLead">
-          Seu espaço digital começa aqui. A inteligência entra quando é necessária.
-          A pessoa, suas mensagens e a continuidade permanecem no centro.
+          Your digital space starts here. Intelligence joins when you need it.
+          You, your messages and continuity remain at the center.
         </p>
         <div className="heroActions">
-          <a className="primaryButton" href="#neon">Explorar o primeiro SideUp <span aria-hidden="true">↗</span></a>
+          <a className="primaryButton" href="#neon">Explore the first SideUp <span aria-hidden="true">↗</span></a>
           <span className="hint">Next.js + Vercel + Neon</span>
         </div>
         <div className="orb orbOne" aria-hidden="true" />
@@ -91,27 +91,27 @@ export default async function Home() {
       <section className="principleGrid" aria-label="Princípios">
         <article className="principle">
           <span className="ordinal">01 / EDGE</span>
-          <h2>Você é a origem.</h2>
-          <p>Sua Side sustenta a identidade. Os serviços se conectam a ela, não o contrário.</p>
+          <h2>You are the origin.</h2>
+          <p>Your Side holds your identity. Services connect to it, not the other way around.</p>
         </article>
         <article className="principle">
           <span className="ordinal">02 / MESSAGE</span>
-          <h2>Conversa preservada.</h2>
-          <p>Mensagem primeiro. INSIDEOUT quando uma diferença merece emergir.</p>
+          <h2>Messages preserved.</h2>
+          <p>Message first. INSIDEOUT when a meaningful difference emerges.</p>
         </article>
         <article className="principle">
           <span className="ordinal">03 / RESOURCES</span>
-          <h2>Potência sob demanda.</h2>
-          <p>Vercel e Neon trabalham como recursos de um ecossistema maior.</p>
+          <h2>Compute on demand.</h2>
+          <p>Vercel and Neon are resources in a larger ecosystem.</p>
         </article>
       </section>
 
       <section id="neon" className="demoSection">
         <div className="sectionTop">
           <div>
-            <div className="eyebrow mini">PROVA DE CONCEITO / 001</div>
+            <div className="eyebrow mini">PROOF OF CONCEPT / 001</div>
             <h2>SideUp Messages</h2>
-            <p>O primeiro encontro entre interface web, processamento e persistência.</p>
+            <p>A first meeting between web interface, processing, and persistence.</p>
           </div>
           <div className={`statusPill ${online ? "good" : "pending"}`}>
             <span className="statusDot" />
@@ -125,10 +125,10 @@ export default async function Home() {
               <span className="surfaceNumber">A / INPUT</span>
               <span className="liveMark">MESSAGE → DATABASE</span>
             </div>
-            <h3>Uma mensagem, persistida.</h3>
+            <h3>A message, persisted.</h3>
             <p className="surfaceDescription">
-              Teste uma escrita real com sua chave privada de demonstração.
-              Nada de credenciais armazenadas no navegador.
+              Test a real write with your private demo key.
+              No credentials stored by the site in browser storage.
             </p>
             <MessageComposer enabled={online} />
           </article>
@@ -138,14 +138,14 @@ export default async function Home() {
               <span className="surfaceNumber">B / STORAGE</span>
               <span className="liveMark">POSTGRESQL / NEON</span>
             </div>
-            <h3>Linha recuperável.</h3>
+            <h3>Recoverable timeline.</h3>
             <p className="surfaceDescription">
-              Os registros abaixo vêm de consultas ao banco a cada carregamento.
+              The records below are queried from the database on every page load.
             </p>
             <div className="databaseNotice">
               <span className={`statusDot ${online ? "ok" : ""}`} />
               <div>
-                <strong>{online ? "Banco conectado" : "Aguardando configuração"}</strong>
+                <strong>{online ? "Database connected" : "Awaiting configuration"}</strong>
                 <span>{explanations[data.kind]}</span>
               </div>
             </div>
@@ -155,7 +155,7 @@ export default async function Home() {
                   <li key={msg.id}>
                     <div className="messageHeading">
                       <strong>{msg.author}</strong>
-                      <span>{new Date(msg.createdAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })}</span>
+                      <span>{new Date(msg.createdAt).toLocaleDateString("en-US", { day: "2-digit", month: "short", year: "numeric" })}</span>
                     </div>
                     <p>{msg.body}</p>
                   </li>
@@ -164,25 +164,25 @@ export default async function Home() {
             ) : (
               <div className="emptyState">
                 <span aria-hidden="true">↗</span>
-                <p>{online ? "Nenhuma mensagem ainda." : "Conecte o Neon para visualizar as mensagens."}</p>
+                <p>{online ? "No messages yet." : "Connect Neon to view messages."}</p>
               </div>
             )}
           </article>
         </div>
         <div className="demoFoot">
-          <span>Endpoint de saúde: <code>/api/health</code></span>
-          <span>Esta demonstração não substitui a MESSAGE LINE pessoal.</span>
+          <span>Health endpoint: <code>/api/health</code></span>
+          <span>This demo does not replace your personal MESSAGE LINE.</span>
         </div>
       </section>
 
       <section className="closing">
-        <p>O próximo SideUp não precisa começar do zero.</p>
-        <h2>Os recursos mudam.<br /><span>A Side permanece.</span></h2>
+        <p>The next SideUp does not need to start from scratch.</p>
+        <h2>Resources change.<br /><span>The Side remains.</span></h2>
       </section>
 
       <footer className="footer">
         <span>side.md <span className="footerAccent">/ SideMinD</span></span>
-        <span>SideUp Web · Prova de conceito</span>
+        <span>SideUp Web · Proof of concept</span>
       </footer>
     </main>
   );
