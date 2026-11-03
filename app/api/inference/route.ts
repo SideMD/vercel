@@ -3,94 +3,135 @@ import { timingSafeEqual } from "node:crypto";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const headers = { "Cache-Control": "no-store" };
-type Provider = "gemini" | "perplexity";
+const noStore = { "Cache-Control": "no-store" };
+type Provider = "gemini" | "perplexity" | "claude" | "nvidia" | "modal";
 
-function accepted(provided: string, expected: string) {
-  if (!provided || !expected) return false;
-  const a = Buffer.from(provided);
-  const b = Buffer.from(expected);
+function secureEqual(value: string, expected: string): boolean {
+  if (!value || !expected) return false;
+  const a = Buffer.from(value, "utf8");
+  const b = Buffer.from(expected, "utf8");
   return a.length === b.length && timingSafeEqual(a, b);
 }
 
-export async function POST(request: Request) {
-  const gate = process.env.SIDE_INFERENCE_GATE_KEY ?? "";
-  if (!gate) {
-    return Response.json({ error: "inference_not_configured" }, { status: 503, headers });
-  }
-  if (!accepted(request.headers.get("x-side-gate-key") ?? "", gate)) {
-    return Response.json({ error: "unauthorized" }, { status: 401, headers });
-  }
+function jsonError(error: string, status: number, provider?: Provider, remoteStatus?: number) {
+  return Response.json({ error, ...(provider ? { provider } : {}), ...(remoteStatus ? { remoteStatus } : {}) }, { status, headers: noStore });
+}
 
-  const raw: unknown = await request.json().catch(() => null);
-  if (!raw || typeof raw !== "object") {
-    return Response.json({ error: "invalid_body" }, { status: 400, headers });
+const compatible = (response: Record<string, any>) =>
+  String(response.choices?.[0]?.message?.content ?? "").slice(0, 10000);
+
+function modalEndpoint() {
+  const raw = process.env.MODAL_ENDPOINT_URL;
+  if (!raw) return null;
+  try {
+    const url = new URL(raw);
+    if (url.protocol !== "https:" || !url.hostname.endsWith(".modal.run") ||
+      url.username || url.password || url.search || url.hash) return null;
+    return url;
+  } catch { return null; }
+}
+
+export async function POST(request: Request) {
+  const gate = process.env.SIDE_INFERENCE_GATE_KEY || "";
+  if (!gate) return jsonError("inference_gate_not_configured", 503);
+  if (!secureEqual(request.headers.get("x-side-gate-key") || "", gate)) {
+    return jsonError("unauthorized", 401);
   }
+  const raw: unknown = await request.json().catch(() => null);
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return jsonError("invalid_payload", 400);
   const data = raw as Record<string, unknown>;
   const provider = data.provider;
   const prompt = typeof data.prompt === "string" ? data.prompt.trim() : "";
-  if ((provider !== "gemini" && provider !== "perplexity") || !prompt || prompt.length > 2000) {
-    return Response.json({ error: "invalid_provider_or_prompt" }, { status: 400, headers });
-  }
+  if (!["gemini", "perplexity", "claude", "nvidia", "modal"].includes(String(provider)) ||
+      prompt.length < 1 || prompt.length > 2000) return jsonError("invalid_provider_or_prompt", 400);
+  const selected = provider as Provider;
 
+  let model = "";
+  let response: Response;
   try {
-    let response: Response;
-    let model: string;
-    if (provider === "gemini") {
+    const signal = AbortSignal.timeout(25000);
+    if (selected === "gemini") {
       const key = process.env.GEMINI_API_KEY;
-      if (!key) {
-        return Response.json({ error: "gemini_key_not_configured" }, { status: 503, headers });
-      }
+      if (!key) return jsonError("gemini_not_connected", 503, selected);
       model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
-      if (!/^[a-zA-Z0-9_.-]{1,100}$/.test(model)) {
-        return Response.json({ error: "invalid_model_configuration" }, { status: 500, headers });
-      }
-      response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "x-goog-api-key": key },
-          body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: prompt }] }] }),
-          signal: AbortSignal.timeout(25000),
-          cache: "no-store",
-        },
-      );
-    } else {
+      if (!/^[\w.-]{1,100}$/.test(model)) return jsonError("invalid_gemini_model", 500);
+      response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+        method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": key },
+        body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: prompt }] }] }),
+        signal, cache: "no-store",
+      });
+    } else if (selected === "perplexity") {
       const key = process.env.PERPLEXITY_API_KEY;
-      if (!key) {
-        return Response.json({ error: "perplexity_key_not_configured" }, { status: 503, headers });
-      }
+      if (!key) return jsonError("perplexity_not_connected", 503, selected);
       model = process.env.PERPLEXITY_MODEL || "sonar";
       response = await fetch("https://api.perplexity.ai/chat/completions", {
+        method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
+        body: JSON.stringify({ model, messages: [{ role: "user", content: prompt }], stream: false }),
+        signal, cache: "no-store",
+      });
+    } else if (selected === "claude") {
+      const key = process.env.ANTHROPIC_API_KEY;
+      const chosenModel = process.env.CLAUDE_MODEL;
+      if (!key || !chosenModel) return jsonError("claude_key_or_model_not_connected", 503, selected);
+      model = chosenModel;
+      response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${key}`,
+          "anthropic-version": "2023-06-01",
+        },
+        body: JSON.stringify({
+          model, max_tokens: 800, messages: [{ role: "user", content: prompt }],
+        }),
+        signal, cache: "no-store",
+      });
+    } else if (selected === "nvidia") {
+      const key = process.env.NVIDIA_API_KEY;
+      if (!key) return jsonError("nvidia_nim_not_connected", 503, selected);
+      model = process.env.NVIDIA_MODEL || "openai/gpt-oss-120b";
+      response = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
-        body: JSON.stringify({
-          model,
-          messages: [{ role: "user", content: prompt }],
-          stream: false,
-        }),
-        signal: AbortSignal.timeout(25000),
-        cache: "no-store",
+        body: JSON.stringify({ model, messages: [{ role: "user", content: prompt }], max_tokens: 800, stream: false }),
+        signal, cache: "no-store",
+      });
+    } else {
+      const endpoint = modalEndpoint();
+      const id = process.env.MODAL_TOKEN_ID;
+      const secret = process.env.MODAL_TOKEN_SECRET;
+      if (!endpoint || !id || !secret) return jsonError("modal_endpoint_or_auth_not_connected", 503, selected);
+      model = "modal-sideup-probe";
+      response = await fetch(endpoint.toString(), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Modal-Key": id,
+          "Modal-Secret": secret,
+        },
+        body: JSON.stringify({ text: prompt }),
+        signal, cache: "no-store",
       });
     }
-    if (!response.ok) {
-      return Response.json(
-        { error: "provider_request_failed", provider, status: response.status },
-        { status: 502, headers },
-      );
-    }
-    const value: any = await response.json();
-    const answer: string = provider === "gemini"
-      ? (value?.candidates?.[0]?.content?.parts ?? []).map((part: any) => part.text ?? "").join("\n")
-      : value?.choices?.[0]?.message?.content ?? "";
-    const citations = provider === "perplexity" && Array.isArray(value?.citations)
-      ? value.citations.filter((x: unknown) => typeof x === "string").slice(0, 8)
-      : [];
-    return Response.json({
-      status: "ok", provider: provider as Provider, model,
-      text: String(answer).slice(0, 10000), citations,
-    }, { headers });
   } catch {
-    return Response.json({ error: "provider_unavailable" }, { status: 503, headers });
+    return jsonError("provider_unreachable", 503, selected);
   }
+
+  if (!response.ok) return jsonError("provider_request_failed", 502, selected, response.status);
+  try {
+    const value = await response.json() as Record<string, any>;
+    const text: string = selected === "gemini"
+      ? (value.candidates?.[0]?.content?.parts ?? []).map((p: {text?: string}) => p.text ?? "").join("\n")
+      : selected === "claude"
+        ? (value.content ?? []).filter((x: {type?: string}) => x.type === "text").map((x: {text?: string}) => x.text ?? "").join("\n")
+        : selected === "modal"
+          ? String(value.summary ?? value.message ?? JSON.stringify(value))
+          : compatible(value);
+    const citations = selected === "perplexity" && Array.isArray(value.citations)
+      ? value.citations.filter((s: unknown) => typeof s === "string").slice(0, 8) : [];
+    return Response.json({
+      status: "ok", provider: selected, model, text: text.slice(0, 10000), citations,
+      kind: selected === "modal" ? "compute_probe" : "inference",
+    }, { headers: noStore });
+  } catch { return jsonError("provider_invalid_response", 502, selected); }
 }
