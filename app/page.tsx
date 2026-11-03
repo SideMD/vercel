@@ -187,7 +187,7 @@ export default async function Home() {
         <article className="surface providerSurface">
           <div className="surfaceTop">
             <span className="surfaceNumber">C / PROCESSING</span>
-            <span className="liveMark">GEMINI · PERPLEXITY · CLAUDE · NVIDIA · MODAL</span>
+            <span className="liveMark">GEMINI · PERPLEXITY · CLAUDE · NVIDIA · MODAL CPU · MODAL GLM</span>
           </div>
           <h3>Ask an AI workspace.</h3>
           <p className="surfaceDescription">
@@ -200,7 +200,8 @@ export default async function Home() {
               perplexity: Boolean(process.env.PERPLEXITY_API_KEY),
               claude: Boolean(process.env.ANTHROPIC_API_KEY && process.env.CLAUDE_MODEL),
               nvidia: Boolean(process.env.NVIDIA_API_KEY),
-              modal: Boolean(process.env.MODAL_ENDPOINT_URL && process.env.MODAL_TOKEN_ID && process.env.MODAL_TOKEN_SECRET),
+              modal: Boolean(process.env.MODAL_ENDPOINT_URL && process.env.MODAL_PROXY_KEY && process.env.MODAL_PROXY_SECRET),
+              modal_glm: Boolean(process.env.MODAL_PROXY_KEY && process.env.MODAL_PROXY_SECRET),
             }}
           />
         </article>
