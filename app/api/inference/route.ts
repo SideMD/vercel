@@ -4,7 +4,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const noStore = { "Cache-Control": "no-store" };
-type Provider = "gemini" | "perplexity" | "claude" | "nvidia" | "modal";
+type Provider = "gemini" | "perplexity" | "claude" | "nvidia" | "modal" | "modal_glm";
 
 function secureEqual(value: string, expected: string): boolean {
   if (!value || !expected) return false;
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
   const data = raw as Record<string, unknown>;
   const provider = data.provider;
   const prompt = typeof data.prompt === "string" ? data.prompt.trim() : "";
-  if (!["gemini", "perplexity", "claude", "nvidia", "modal"].includes(String(provider)) ||
+  if (!["gemini", "perplexity", "claude", "nvidia", "modal", "modal_glm"].includes(String(provider)) ||
       prompt.length < 1 || prompt.length > 2000) return jsonError("invalid_provider_or_prompt", 400);
   const selected = provider as Provider;
 
@@ -94,6 +94,28 @@ export async function POST(request: Request) {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
         body: JSON.stringify({ model, messages: [{ role: "user", content: prompt }], max_tokens: 800, stream: false }),
+        signal, cache: "no-store",
+      });
+    } else if (selected === "modal_glm") {
+      const key = process.env.MODAL_PROXY_KEY;
+      const secret = process.env.MODAL_PROXY_SECRET;
+      if (!key || !secret) return jsonError("modal_proxy_not_connected", 503, selected);
+      model = "zai-org/GLM-5.3-Flash";
+      const endpoint = "https://sidemd--ep-glm-5-3-flash-server.us-west.modal.direct/v1/chat/completions";
+      response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${key}.${secret}`,
+        },
+        body: JSON.stringify({
+          model,
+          messages: [{ role: "user", content: prompt }],
+          temperature: 0.7,
+          max_tokens: 128,
+          stream: false,
+          reasoning_effort: "none",
+        }),
         signal, cache: "no-store",
       });
     } else {
