@@ -181,19 +181,28 @@ export default async function Home() {
           <div>
             <div className="eyebrow mini">WORKSPACES / ON DEMAND</div>
             <h2>Bring intelligence into the meeting.</h2>
-            <p>Gemini and Perplexity remain external resources. Your Side stays yours.</p>
+            <p>Google Gemini, Perplexity, Claude, NVIDIA and Modal are independent resources. Your Side stays yours.</p>
           </div>
         </div>
         <article className="surface providerSurface">
           <div className="surfaceTop">
             <span className="surfaceNumber">C / PROCESSING</span>
-            <span className="liveMark">GEMINI · PERPLEXITY</span>
+            <span className="liveMark">GEMINI · PERPLEXITY · CLAUDE · NVIDIA · MODAL</span>
           </div>
           <h3>Ask an AI workspace.</h3>
           <p className="surfaceDescription">
             Optional server-side access through keys configured on Vercel. No provider credentials are sent to the browser.
           </p>
-          <InferenceComposer enabled={Boolean(process.env.SIDE_INFERENCE_GATE_KEY)} />
+          <InferenceComposer
+            enabled={Boolean(process.env.SIDE_INFERENCE_GATE_KEY)}
+            status={{
+              gemini: Boolean(process.env.GEMINI_API_KEY),
+              perplexity: Boolean(process.env.PERPLEXITY_API_KEY),
+              claude: Boolean(process.env.ANTHROPIC_API_KEY && process.env.CLAUDE_MODEL),
+              nvidia: Boolean(process.env.NVIDIA_API_KEY),
+              modal: Boolean(process.env.MODAL_ENDPOINT_URL && process.env.MODAL_TOKEN_ID && process.env.MODAL_TOKEN_SECRET),
+            }}
+          />
         </article>
       </section>
 
