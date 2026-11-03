@@ -11,5 +11,5 @@ create index if not exists side_demo_messages_newest
   on public.side_demo_messages (created_at desc);
 
 insert into public.side_demo_messages (author, body)
-select 'SideMinD', 'SideUp Web alcançou Neon. O encontro continua no Edge.'
+select 'SideMinD', 'SideUp Web connected to Neon. The meeting continues at the Edge.'
 where not exists (select 1 from public.side_demo_messages);
