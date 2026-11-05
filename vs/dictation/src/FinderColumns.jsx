@@ -5,7 +5,7 @@ import './columns.css'
 
 const TREE = {
   SIDE: ['VS','SID','Technology','Greek','Phoenician','Other'],
-  VS: ['Finder','Pages','Dictation','Images','Waterline'],
+  VS: ['Finder','Pages','Dictation','Waterline','Notes','WS','Agenda','Browser','ChatSMD','WiseWiki','Twin','Taurus','Paris','Images'],
   SID: ['SI','SGPU','Relay'],
   Technology: ['Software','Interface'],
   Greek: ['October','INSIDEOUTs','Constellation'],
@@ -33,7 +33,8 @@ const PATHS = {
   Graviton:'phoenician/alef/tau/muon/axion/graviton',
   Transcripts:'other',History:'other',Logo:'vs/images/logo',
 }
-const APPS = ['Finder','Pages','Waterline','Notes','Agenda','Browser','ChatSMD']
+const APPS = ['Finder','Pages','Waterline','Notes','WS','Agenda','Browser','ChatSMD','WiseWiki','Twin','Taurus','Paris']
+const SURFACES = { Finder:'finder', Pages:'pages', Waterline:'waterline', Notes:'notes', WS:'ws', Agenda:'agenda', Browser:'browser', ChatSMD:'chatsmd', WiseWiki:'wisewiki', Twin:'twin', Taurus:'taurus', Paris:'paris' }
 const known = name => SOURCES.find(item => item.title === name)
 const pathFor = name => PATHS[name] || null
 
@@ -45,7 +46,7 @@ function GitLink({name}) {
   return url ? <a href={url} target="_blank" rel="noreferrer">Open verified source</a> : null
 }
 
-export default function FinderColumns({onOpenPages,onOpenWaterline,onReadSource,onReadRecord}) {
+export default function FinderColumns({onOpenPages,onOpenWaterline,onOpenSurface,onReadSource,onReadRecord}) {
   const [path,setPath] = useState(['SIDE','VS'])
   const [selection,setSelection] = useState('Pages')
   const [query,setQuery] = useState('')
@@ -115,6 +116,7 @@ export default function FinderColumns({onOpenPages,onOpenWaterline,onReadSource,
     if (source) return onReadSource?.(source)
     if(name==='Pages'||name==='Dictation') return onOpenPages()
     if(name==='Waterline') return onOpenWaterline()
+    if(SURFACES[name]) return onOpenSurface?.(SURFACES[name])
     select(name)
   }
   const detail=known(selection)
@@ -123,11 +125,10 @@ export default function FinderColumns({onOpenPages,onOpenWaterline,onReadSource,
       <nav className="finder-stage" aria-label="Stage">
         <img src={sideSymbol} alt="SIDE" />
         {APPS.map((name,i)=><button type="button" key={name}
-          disabled={!['Finder','Pages','Waterline'].includes(name)}
           aria-label={name} title={name}
           className={name==='Finder'?'on':''}
-          onClick={()=>name==='Pages'?onOpenPages():name==='Waterline'?onOpenWaterline():setPath(['SIDE','VS'])}>
-          <span>{['F','P','W','N','A','B','C'][i]}</span><small>{name}</small>
+          onClick={()=>name==='Finder'?setPath(['SIDE','VS']):onOpenSurface?.(SURFACES[name])}>
+          <span>{['F','P','W','N','W','A','B','C','W','T','T','P'][i]}</span><small>{name}</small>
         </button>)}
       </nav>
       <main className="finder-center">
