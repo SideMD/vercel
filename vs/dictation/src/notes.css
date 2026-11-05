@@ -1,0 +1,27 @@
+.vs-notes{display:grid;grid-template-columns:276px minmax(0,1fr);min-height:calc(100vh - 66px);background:#f9fbfc;color:#293d4a}
+.notes-list{background:#fff;border-right:1px solid #e5edf1;padding:26px 18px;min-width:0}
+.notes-list header small,.notes-editor-header small{display:block;font-size:10px;font-weight:750;color:#0d80bf;letter-spacing:.14em}
+.notes-list header h1{font-family:"SF Pro Display","SF Pro",-apple-system,sans-serif;font-size:28px;margin:8px 0 16px}
+.notes-add{border:0;background:#0d80bf;color:#fff;padding:10px 12px;border-radius:9px;font-size:12px;font-weight:680}
+.notes-search{width:100%;min-width:0;margin-top:24px;border:1px solid #e1eaf0;border-radius:9px;padding:12px;font:inherit;font-size:12px;outline-color:#0d80bf}
+.notes-items{display:flex;flex-direction:column;gap:7px;margin-top:14px;max-height:calc(100vh - 260px);overflow:auto}
+.notes-item{display:flex;align-items:flex-start;flex-direction:column;gap:8px;width:100%;text-align:left;background:#fff;border:1px solid transparent;border-radius:9px;padding:12px;color:#405e70}
+.notes-item strong{font-size:13px;line-height:1.4;overflow-wrap:anywhere}
+.notes-item span{color:#97a8b4;font-size:10px}
+.notes-item.selected{background:#eaf6fc;border-color:#d5eaf6;color:#0d80bf}
+.notes-empty{font-size:12px;color:#9faeb8;line-height:1.6;padding:16px}
+.notes-editor-area{display:flex;flex-direction:column;min-width:0;min-height:calc(100vh - 66px)}
+.notes-editor-header{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:22px 32px;background:#fff;border-bottom:1px solid #e9eff3}
+.notes-editor-header strong{display:block;margin-top:8px;font-size:15px;line-height:1.4}
+.notes-buttons{display:flex;gap:8px;flex-wrap:wrap}
+.notes-buttons button{border:1px solid #dce7ee;background:#f1f8fc;color:#0d80bf;border-radius:8px;padding:9px 11px;font-size:11px}
+.notes-buttons button:disabled{opacity:.4}
+.notes-prosemirror{width:min(760px,100%);padding:38px clamp(24px,6vw,80px);margin:0 auto;flex:1}
+.notes-prosemirror .ProseMirror{min-height:52vh;outline:none;line-height:1.75;font-size:15px}
+.notes-prosemirror .ProseMirror h1,.notes-prosemirror .ProseMirror h2{font-family:"SF Pro Display","SF Pro",-apple-system,sans-serif;line-height:1.35}
+.notes-prosemirror .ProseMirror h1{font-size:29px}
+.notes-intro{margin:auto;text-align:center;color:#7f97a5;padding:26px}
+.notes-intro h2{color:#365164;font-size:24px}
+.notes-intro button{border:0;border-radius:9px;background:#0d80bf;color:#fff;padding:11px 16px}
+.notes-footer{display:flex;justify-content:space-between;gap:12px;padding:16px 32px;border-top:1px solid #e9eff3;color:#9babb5;font-size:11px;background:white}
+@media(max-width:700px){.vs-notes{grid-template-columns:1fr}.notes-list{border-right:0;border-bottom:1px solid #e5edf1;padding:18px}.notes-list header{display:flex;align-items:center;justify-content:space-between;gap:12px}.notes-list header h1{font-size:22px;margin:0}.notes-list header small{display:none}.notes-search{margin-top:12px}.notes-items{flex-direction:row;overflow:auto;max-height:115px}.notes-item{min-width:145px}.notes-editor-header{padding:16px}.notes-prosemirror{padding:24px}.notes-footer{padding:12px}}
