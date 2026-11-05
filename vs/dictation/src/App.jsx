@@ -6,6 +6,7 @@ import { closeHistory } from '@tiptap/pm/history'
 import sideLogo from '../../images/logo/dominio/sideMD-sem-ponto-transparente.svg'
 import FinderColumns from './FinderColumns.jsx'
 import Waterline from './Waterline.jsx'
+import InsideoutReader from './InsideoutReader.jsx'
 import { addTimelineEntry } from './timeline'
 import './columns.css'
 
@@ -62,10 +63,11 @@ function formatTime(value) {
 
 export default function App() {
   const [dockOpen, setDockOpen] = useState(false)
+  const [reading, setReading] = useState(null)
   const [recording, setRecording] = useState(false)
   const [processing, setProcessing] = useState(false)
   const [seconds, setSeconds] = useState(0)
-  const [surface, setSurface] = useState(() => window.location.hash === '#pages' ? 'pages' : window.location.hash === '#finder' ? 'finder' : window.__TAURI_INTERNALS__ ? 'pages' : 'finder')
+  const [surface, setSurface] = useState(() => window.location.hash === '#waterline' ? 'waterline' : window.location.hash === '#pages' ? 'pages' : window.location.hash === '#finder' ? 'finder' : window.__TAURI_INTERNALS__ ? 'pages' : 'finder')
   const [status, setStatus] = useState('')
   const [failure, setFailure] = useState('')
 
@@ -382,6 +384,29 @@ export default function App() {
     }
   }
 
+  function openSourceReader(source) {
+    if (recordingRef.current || processing) return
+    setReading({
+      ref: 'src:' + source.id,
+      original: true, source,
+      title: source.title, kind: source.kind,
+      detail: source.origin,
+    })
+  }
+
+  function editFromReader(markdown) {
+    if (!editor || !markdown || recordingRef.current || processing) return
+    const current = editor.getMarkdown()
+    if (current.trim() && current !== DEFAULT_DOCUMENT &&
+      !window.confirm('Replace the current Pages document with this text?')) return
+    editor.commands.setContent(markdown, { contentType: 'markdown' })
+    editor.commands.focus('start')
+    insertionPointRef.current = { from: 1, to: 1 }
+    setReading(null)
+    openSurface('pages')
+    setStatus('Document loaded in Pages. Changes are saved locally.')
+  }
+
   async function importDocument(event) {
     const file = event.target.files?.[0]
     event.target.value = ''
@@ -426,9 +451,10 @@ export default function App() {
         <input type="file" ref={fileRef} hidden accept=".md,.markdown,text/plain" onChange={importDocument} />
       </header>
       {surface === 'finder' ? (
-        <FinderColumns onOpenPages={() => openSurface('pages')} onOpenWaterline={() => openSurface('waterline')} />
+        <FinderColumns onOpenPages={() => openSurface('pages')} onOpenWaterline={() => openSurface('waterline')}
+          onReadSource={openSourceReader} />
       ) : surface === 'waterline' ? (
-        <Waterline onOpenPages={() => openSurface('pages')}/>
+        <Waterline onOpenPages={() => openSurface('pages')} onReadRecord={setReading}/>
       ) : (
         <main className="workspace">
           <section className="document-page" aria-label="Editable document">
@@ -473,6 +499,7 @@ export default function App() {
           <span className="dock-chevron">{dockOpen ? '⌄' : '⌃'}</span>
         </button>
       </nav>
+      <InsideoutReader record={reading} onClose={() => setReading(null)} onEdit={editFromReader} />
       {(failure || status) && surface === 'pages' &&
         <div role="status" className={'voice-notice' + (failure ? ' is-error' : '')}>{failure || status}</div>}
     </div>

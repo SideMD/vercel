@@ -38,13 +38,15 @@ function shortType(record) {
     record.kind === 'DICTATION' ? 'Dictation' : 'Edit'
 }
 
-export default function Waterline({ onOpenPages }) {
+export default function Waterline({ onOpenPages, onReadRecord }) {
   const [entries, setEntries] = useState(readTimeline)
   const [state, setState] = useState(readSideState)
   const [sideId, setSideId] = useState(ROOT_SIDE.id)
-  const [view, setView] = useState('tl')
+  const [view, setView] = useState('wtl')
   const [list, setList] = useState('whole')
   const [query, setQuery] = useState('')
+  const [leftOpen, setLeftOpen] = useState(false)
+  const [rightOpen, setRightOpen] = useState(false)
   const [newSide, setNewSide] = useState('')
   const [showCreate, setShowCreate] = useState(false)
   const [selectedRef, setSelectedRef] = useState(null)
@@ -105,7 +107,10 @@ export default function Waterline({ onOpenPages }) {
       <button type="button" key={record.ref}
         className={'waterline-record' + (selectedRef === record.ref ? ' is-selected' : '')}
         onClick={() => setSelectedRef(record.ref)}
-        aria-pressed={selectedRef === record.ref}>
+        aria-pressed={selectedRef === record.ref}
+        onDoubleClick={() => onReadRecord?.(record)}
+        onKeyDown={event => { if (event.key === "Enter") onReadRecord?.(record) }}
+        title="Double-click or press Enter to read">
         <span className="waterline-record-top">
           <span className={'record-kind' + (record.insideout ? ' blue' : '')}>{shortType(record)}</span>
           <span className="record-time">{timeLabel(record)}</span>
@@ -118,7 +123,7 @@ export default function Waterline({ onOpenPages }) {
     )
   }
   return (
-    <main className="waterline-shell">
+    <main className={"waterline-shell" + (!leftOpen ? " left-collapsed" : "") + (!rightOpen ? " right-collapsed" : "")}>
       <nav className="waterline-sides" aria-label="Sides">
         <div className="waterline-sides-title"><span>SIDES</span><small>{state.sides.length}</small></div>
         {state.sides.map(side => (
@@ -143,13 +148,18 @@ export default function Waterline({ onOpenPages }) {
 
       <section className="waterline-main" aria-label="Waterline">
         <div className="waterline-heading">
-          <div><span className="waterline-eyebrow">VS / WATERLINE</span><h1>{sideName}</h1>
-            <p>Lists and time projections across the selected Side.</p></div>
-          <button type="button" className="waterline-pages" onClick={onOpenPages}>Open Pages</button>
+          <div className="waterline-heading-main">
+            <button type="button" className="waterline-toggle" aria-label={leftOpen ? "Collapse Sides" : "Expand Sides"}
+              aria-expanded={leftOpen} onClick={() => setLeftOpen(v => !v)}>☰ <span>SIDES</span></button>
+            <div><span className="waterline-eyebrow">VS / WATERLINE</span><h1>{sideName}</h1>
+              <p>Double-click an INSIDEOUT to read. Use ORDER to organize references.</p></div>
+          </div>
+          <button type="button" className="waterline-toggle" aria-label={rightOpen ? "Collapse Order" : "Expand Order"}
+            aria-expanded={rightOpen} onClick={() => setRightOpen(v => !v)}>ORDER <span>◫</span></button>
         </div>
         <div className="waterline-toolbar">
           <div className="waterline-views" role="group" aria-label="Time projection">
-            <button type="button" aria-pressed={view === 'tl'} className={view === 'tl' ? 'active' : ''} onClick={() => setView('tl')}>TL</button>
+            <button type="button" aria-pressed={view === 'wtl'} className={view === 'wtl' ? 'active' : ''} onClick={() => setView('wtl')}>WTL</button>
             <button type="button" aria-pressed={view === 'atl'} className={view === 'atl' ? 'active' : ''} onClick={() => setView('atl')}>ATL</button>
           </div>
           <input aria-label="Find within Side" placeholder="Find a source or INSIDEOUT…" value={query} onChange={event => setQuery(event.target.value)} />
@@ -163,9 +173,9 @@ export default function Waterline({ onOpenPages }) {
           ))}
         </nav>
 
-        {view === 'tl' ? (
-          <div className="waterline-tl" aria-label="Factual timeline">
-            <div className="waterline-section-caption">TL <span>Source chronology · {shown.length} records</span></div>
+        {view === 'wtl' ? (
+          <div className="waterline-tl" aria-label="Waterline timeline">
+            <div className="waterline-section-caption">WTL <span>Source chronology · {shown.length} records</span></div>
             {groups.length ? groups.map(group => (
               <section key={group.key} className="waterline-day">
                 <h2>{timeGroupLabel(group.key)}</h2>
@@ -181,7 +191,7 @@ export default function Waterline({ onOpenPages }) {
                 <button type="button" key={month.month} className={'waterline-month' +
                   (selected && state.atl[selected.ref] === month.month ? ' placed' : '')}
                   disabled={!selected || !belongsToSide(state, selected, sideId)}
-                  title={selected ? 'Place selected record in ' + month.name : 'Select a record in TL first'}
+                  title={selected ? 'Place selected record in ' + month.name : 'Select a record in WTL first'}
                   onClick={() => selected && apply({type:'atl',ref:selected.ref,month:month.month})}>
                   <span>{month.name.slice(0,3).toUpperCase()}</span><strong>{month.items.length}</strong>
                   <small>{month.items.slice(0,2).map(item => item.title).join(' · ') || 'Open'}</small>
@@ -190,7 +200,7 @@ export default function Waterline({ onOpenPages }) {
             </div>
             <div className="waterline-atl-selection">
               <strong>Unplaced</strong><span>{shown.filter(item => !state.atl[item.ref]).length}</span>
-              <p>Select an item in TL, switch to ATL, and choose a month. The source time will remain unchanged.</p>
+              <p>Select an item in WTL, switch to ATL, and choose a month. The source time will remain unchanged.</p>
             </div>
             {shown.some(item => state.atl[item.ref]) && (
               <div className="waterline-atl-list">{shown.filter(item => state.atl[item.ref]).map(recordCard)}</div>
@@ -247,7 +257,7 @@ export default function Waterline({ onOpenPages }) {
                 <option value="">Unassigned</option>
                 {ATL_MONTHS.map((name,index)=><option key={name} value={index+1}>{name}</option>)}
               </select>
-              <p>TL and the original document are not changed by ATL placement.</p>
+              <p>WTL and the original document are not changed by ATL placement.</p>
             </div>
           </div>
         )}

@@ -1,0 +1,20 @@
+.insideout-backdrop{position:fixed;inset:0;z-index:90;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(9,24,35,.7)}
+.insideout-dialog{width:min(920px,100%);height:min(760px,92vh);display:flex;flex-direction:column;background:white;border-radius:16px;overflow:hidden;outline:none}
+.insideout-reader-header{display:flex;justify-content:space-between;padding:24px;gap:12px;border-bottom:1px solid #e8edf1}
+.insideout-reader-identity{min-width:0}
+.insideout-reader-identity small{font-size:10px;color:#0d80bf;font-weight:700;letter-spacing:.12em}
+.insideout-reader-identity h2{font-size:24px;margin:8px 0}
+.insideout-reader-identity span{font-size:10px;color:#95a6b1;overflow-wrap:anywhere}
+.insideout-close{background:#f2f6f9;color:#6b8798;border:0;border-radius:8px;width:36px;height:36px;font-size:25px;flex:none}
+.insideout-reader-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:12px 24px;border-bottom:1px solid #edf2f5}
+.insideout-reader-tools a,.insideout-reader-tools button{font-size:11px;font-weight:700;text-decoration:none;color:#0d80bf;background:#edf7fc;border:1px solid #d8eaf4;border-radius:8px;padding:9px 12px}
+.insideout-reader-tools .insideout-edit{background:#0d80bf;color:white;margin-left:auto}
+.insideout-reader-body{overflow:auto;flex:1;padding:30px clamp(16px,5vw,64px)}
+.insideout-reader-document .ProseMirror{min-height:0;outline:none;line-height:1.75;font-size:15px}
+.insideout-reader-placeholder{padding:26px 0;color:#8798a4}
+.insideout-reader-placeholder p{max-width:560px;font-size:13px;line-height:1.7}
+.insideout-reader-placeholder code{display:block;overflow-wrap:anywhere;font-size:11px;color:#0d80bf}
+.insideout-reader-error{color:#a44437;font-size:12px}
+.insideout-reader-file{font-size:11px;color:#96a7b3}
+.insideout-reader-footer{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;border-top:1px solid #edf1f4;padding:13px 24px;font-size:10px;color:#99a8b3}
+@media(max-width:620px){.insideout-backdrop{padding:5px}.insideout-dialog{height:98vh}.insideout-reader-header{padding:14px}.insideout-reader-identity h2{font-size:19px}.insideout-reader-body{padding:18px}.insideout-reader-tools{padding:10px}}
