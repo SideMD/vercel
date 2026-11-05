@@ -9,7 +9,7 @@ npm ci
 npm run dev
 ```
 
-The application opens Finder by default and has Pages, Dictation and Waterline. A click on the Pages microphone starts a browser-supported speech-recognition session. Recording is transcribed at Stop and inserted into the document cursor. The editor uses system SF Pro on Apple devices; no Apple font file is redistributed.
+The application opens Finder by default and has Pages, Dictation and the Sides-first Waterline. Waterline supports named Sides, multi-Side source links, Whole/INTRA/EXTRA/INSIDEOUTs/Pending lists, factual TL, and manually assigned 3×4 ATL with Order controls. A click on the Pages microphone starts a browser-supported speech-recognition session. Recording is transcribed at Stop and inserted into the document cursor. The editor uses system SF Pro on Apple devices; no Apple font file is redistributed.
 
 ## Vercel
 
@@ -19,9 +19,18 @@ Verify Vercel **Deployment Protection** before uploading private content or send
 
 ## Source contract
 
-- **Canonical UI source:** `sideMD/side@cdf0188ccacbd71e2597a749f5f3deed550d3d8f`, under `vs/dictation/src` and `vs/images/logo`.
+- **Canonical UI source:** `sideMD/side@39e2dc5be651d5e442813f6301c21b971c9813f4`, under `vs/dictation/src` and `vs/images/logo`.
 - **This repository:** web deployment mirror. Future UI changes in SIDE should be deliberately synced and build-tested here.
 - **MM/SGPU:** no remote MM persistence or live SGPU process is implied by the static site.
 - **Speech:** browser `SpeechRecognition` when supported, not local Whisper or NVIDIA NIM in Vercel. Remote ASR requires a separate authenticated backend; keep all keys server-only.
 
-To rename the GitHub repository, use its Settings → General → Repository name. The intended name is `site.md`; GitHub/Vercel integration may need verification after the rename.
+The web repository currently lives at `sideMD/side.md`, mirroring the canonical `sideMD/side` VS sources. Keep the domain mapping in the connected deployment project.
+
+## Waterline checks
+
+```sh
+node --test vs/dictation/tests/*.test.mjs
+npm run build
+```
+
+SIDE is the root collection; additional named Sides are created on demand and link source references without duplicating originals. INTRA/EXTRA and ATL choices are stored locally in the user's browser until the SIDE-managed shared service provides authenticated read/write.
