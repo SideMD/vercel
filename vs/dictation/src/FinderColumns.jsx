@@ -45,7 +45,7 @@ function GitLink({name}) {
   return url ? <a href={url} target="_blank" rel="noreferrer">Open verified source</a> : null
 }
 
-export default function FinderColumns({onOpenPages,onOpenWaterline}) {
+export default function FinderColumns({onOpenPages,onOpenWaterline,onReadSource}) {
   const [path,setPath] = useState(['SIDE','VS'])
   const [selection,setSelection] = useState('Pages')
   const [query,setQuery] = useState('')
@@ -74,8 +74,10 @@ export default function FinderColumns({onOpenPages,onOpenWaterline}) {
     }
   }
   function open(name) {
+    const source = known(name)
+    if (source) return onReadSource?.(source)
     if(name==='Pages'||name==='Dictation') return onOpenPages()
-    if(name==='Waterline'||name==='Waterline') return onOpenWaterline()
+    if(name==='Waterline') return onOpenWaterline()
     select(name)
   }
   const detail=known(selection)
@@ -110,10 +112,11 @@ export default function FinderColumns({onOpenPages,onOpenWaterline}) {
         </section>
         {showSources&&<section className="finder-source-results" aria-label="Source results">
           <div className="finder-results-top"><strong>INSIDEOUTs / Sources</strong><small>{results.length} verified references</small></div>
-          {results.map(item=><a key={item.id} href={sourceLink(item)} target="_blank" rel="noreferrer">
+          {results.map(item=><button type="button" key={item.id} className="finder-source-row"
+            onClick={() => onReadSource?.(item)} title="Read INSIDEOUT here">
             <span className="source-kind">{item.kind}</span><span className="source-title">{item.title}</span>
-            <span className="source-origin">{item.origin}</span><span className="source-open">↗</span>
-          </a>)}
+            <span className="source-origin">{item.origin}</span><span className="source-open">Read ↗</span>
+          </button>)}
           {results.length===0&&<p>No indexed source matches this search.</p>}
         </section>}
       </main>
