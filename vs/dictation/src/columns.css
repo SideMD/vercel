@@ -62,3 +62,7 @@
 .finder-local-results .source-title{max-width:42%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .finder-local-results .source-origin{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media(max-width:670px){.finder-title-actions{width:100%}.finder-title-actions button{flex:1}}
+
+/* Stage of available VS surfaces; masks are visible for incremental build-out. */
+.finder-stage{max-height:calc(100vh - 91px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:#d3e5ef transparent}
+.finder-stage button{flex:none}
