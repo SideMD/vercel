@@ -7,10 +7,15 @@ import sideLogo from '../../images/logo/dominio/sideMD-sem-ponto-transparente.sv
 import FinderColumns from './FinderColumns.jsx'
 import Waterline from './Waterline.jsx'
 import InsideoutReader from './InsideoutReader.jsx'
+import Notes from './Notes.jsx'
+import WorkspaceSurface, { MASK_NAMES } from './WorkspaceSurface.jsx'
 import { addTimelineEntry } from './timeline'
 import './columns.css'
 
 const DOCUMENT_KEY = 'side.vs.dictation.document.md.v1'
+const ACTIVE_SURFACES = ['finder','pages','waterline','notes',...MASK_NAMES]
+const SURFACE_NAMES = {finder:'Finder',pages:'Pages',waterline:'WTL',notes:'Notes',ws:'WS',agenda:'Agenda',browser:'Browser',chatsmd:'ChatSMD',wisewiki:'WiseWiki',twin:'Twin',taurus:'Taurus',paris:'Paris'}
+const defaultSurface = () => { const route = window.location.hash.slice(1).toLowerCase(); return ACTIVE_SURFACES.includes(route) ? route : 'finder' }
 const TRANSCRIBE_URL = (import.meta.env.VITE_DICTATION_TRANSCRIBE_URL || '').trim()
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
 const DEFAULT_DOCUMENT = '# INSIDEOUT\n\nClick where you want to write. Tap the microphone in the top bar, speak, then press Stop to insert your words at the cursor.\n'
@@ -67,7 +72,7 @@ export default function App() {
   const [recording, setRecording] = useState(false)
   const [processing, setProcessing] = useState(false)
   const [seconds, setSeconds] = useState(0)
-  const [surface, setSurface] = useState(() => window.location.hash === '#waterline' ? 'waterline' : window.location.hash === '#pages' ? 'pages' : window.location.hash === '#finder' ? 'finder' : window.__TAURI_INTERNALS__ ? 'pages' : 'finder')
+  const [surface, setSurface] = useState(defaultSurface)
   const [status, setStatus] = useState('')
   const [failure, setFailure] = useState('')
 
@@ -110,15 +115,16 @@ export default function App() {
   useEffect(() => () => { if (editTimerRef.current) clearTimeout(editTimerRef.current) }, [])
 
   useEffect(() => {
-    const onHash = () => setSurface(window.location.hash === '#waterline' ? 'waterline' : window.location.hash === '#pages' ? 'pages' : window.location.hash === '#finder' ? 'finder' : window.__TAURI_INTERNALS__ ? 'pages' : 'finder')
+    const onHash = () => setSurface(defaultSurface())
     window.addEventListener('hashchange', onHash)
     return () => window.removeEventListener('hashchange', onHash)
   }, [])
 
   function openSurface(next) {
     if (recordingRef.current || processing) return
-    window.location.hash = next === 'waterline' ? 'waterline' : next === 'finder' ? 'finder' : 'pages'
-    setSurface(next)
+    const target = ACTIVE_SURFACES.includes(next) ? next : 'finder'
+    window.location.hash = target
+    setSurface(target)
     setDockOpen(false)
   }
 
@@ -440,7 +446,7 @@ export default function App() {
     <div className="dictation-app">
       <header className="header">
         <img className="brand-logo" src={sideLogo} alt="sideMD" />
-        <span className="address">VS / {surface === 'finder' ? 'Finder' : surface === 'waterline' ? 'Waterline' : 'Pages'}</span>
+        <span className="address">VS / {SURFACE_NAMES[surface] || 'Finder'}</span>
         <span className="header-context">SIDE / VISUALIZATION</span>
         {surface === 'pages' && <button type="button" className={'header-mic'+(recording?' recording':'')}
           disabled={recording || processing} onClick={startRecording} aria-label="Record dictation" title="Record dictation">
@@ -452,9 +458,14 @@ export default function App() {
       </header>
       {surface === 'finder' ? (
         <FinderColumns onOpenPages={() => openSurface('pages')} onOpenWaterline={() => openSurface('waterline')}
-          onReadSource={openSourceReader} onReadRecord={setReading} />
+          onOpenSurface={openSurface} onReadSource={openSourceReader} onReadRecord={setReading} />
       ) : surface === 'waterline' ? (
         <Waterline onOpenPages={() => openSurface('pages')} onReadRecord={setReading}/>
+      ) : surface === 'notes' ? (
+        <Notes onOpenPages={() => openSurface('pages')} onOpenFinder={() => openSurface('finder')}/>
+      ) : MASK_NAMES.includes(surface) ? (
+        <WorkspaceSurface surface={surface} onOpenFinder={() => openSurface('finder')}
+          onOpenPages={() => openSurface('pages')} onOpenWaterline={() => openSurface('waterline')}/>
       ) : (
         <main className="workspace">
           <section className="document-page" aria-label="Editable document">
@@ -486,7 +497,10 @@ export default function App() {
         {dockOpen && <div className="dock-buttons">
           <button type="button" disabled={recording || processing} className={surface === 'finder' ? 'selected' : ''} onClick={() => openSurface('finder')}>Finder</button>
           <button type="button" disabled={recording || processing} className={surface === 'pages' ? 'selected' : ''} onClick={() => openSurface('pages')}>Pages</button>
-          <button type="button" disabled={recording || processing} className={surface === 'waterline' ? 'selected' : ''} onClick={() => openSurface('waterline')}>Waterline</button>
+          <button type="button" disabled={recording || processing} className={surface === 'waterline' ? 'selected' : ''} onClick={() => openSurface('waterline')}>WTL</button>
+          <button type="button" disabled={recording || processing} className={surface === 'notes' ? 'selected' : ''} onClick={() => openSurface('notes')}>Notes</button>
+          {MASK_NAMES.map(key => <button type="button" key={key} disabled={recording || processing}
+            className={surface === key ? 'selected' : ''} onClick={() => openSurface(key)}>{SURFACE_NAMES[key]}</button>)}
           {surface === 'pages' && <>
             <button type="button" disabled={recording || processing} onClick={() => {fileRef.current?.click();setDockOpen(false)}}>Open MD</button>
             <button type="button" disabled={recording || processing} onClick={() => {exportDocument();setDockOpen(false)}}>Save MD</button>
