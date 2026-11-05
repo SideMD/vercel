@@ -54,3 +54,11 @@
   padding:14px 4px;color:#30495a;font-size:11px;cursor:pointer}
 .finder-source-results .finder-source-row:hover{background:#f5f9fb}
 .finder-source-results .finder-source-row .source-open{white-space:nowrap}
+
+.finder-title-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.finder-title-actions button:first-child{background:#e8f5fc;color:#0d80bf;border:1px solid #c7e4f3}
+.finder-local-results{border-color:#c8e3f0}
+.finder-local-note{font-size:11px;color:#8097a5;margin:4px 4px 13px}
+.finder-local-results .source-title{max-width:42%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.finder-local-results .source-origin{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:670px){.finder-title-actions{width:100%}.finder-title-actions button{flex:1}}
