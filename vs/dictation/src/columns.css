@@ -1,0 +1,50 @@
+.finder-shell{display:grid;grid-template-columns:90px minmax(0,1fr) 246px;min-height:calc(100vh - 66px);background:#f6f8fa}
+.finder-stage{align-self:start;position:sticky;top:72px;margin:19px 7px 0 15px;border-radius:21px;background:#fff;border:1px solid #e6ebef;box-shadow:0 7px 26px #12283b0b;display:flex;flex-direction:column;align-items:center;gap:8px;padding:17px 5px}
+.finder-stage>img{width:40px;height:40px;object-fit:contain;margin-bottom:12px}
+.finder-stage button{width:58px;min-height:59px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px;border:0;background:transparent;color:#6e8190;border-radius:12px}
+.finder-stage button span{font-size:15px;font-weight:750;display:grid;place-items:center;width:31px;height:31px;background:#ecf1f5;border-radius:10px}
+.finder-stage button small{font-size:8px}
+.finder-stage button.on{background:#eaf5fb;color:#0d80bf}
+.finder-stage button.on span{background:#0d80bf;color:#fff}
+.finder-stage button:disabled{opacity:.3}
+.finder-center{min-width:0;padding:38px 27px 115px}
+.finder-title{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:25px}
+.finder-title small{color:#0d80bf;font-size:10px;font-weight:750;letter-spacing:.17em}
+.finder-title h1{font-size:31px;letter-spacing:-.04em;margin:6px 0}
+.finder-title p{font-size:12px;color:#8b9ba6;margin:0}
+.finder-title button{background:#0d80bf;color:#fff;border:0;border-radius:9px;padding:11px 13px;font-size:11px;font-weight:750}
+.finder-search{height:48px;display:flex;align-items:center;gap:11px;background:white;border:1px solid #e2e9ee;border-radius:12px;padding:0 12px;margin-bottom:12px;color:#849dab}
+.finder-search input{min-width:0;flex:1;border:0;outline:0;font:inherit;font-size:12px;color:#253e4f}
+.finder-search>button{border:0;background:#f1f7fa;color:#317ba2;border-radius:8px;padding:8px;font-size:10px;font-weight:650}
+.finder-columns{display:flex;overflow-x:auto;min-height:325px;background:white;border:1px solid #dfe8ee;border-radius:13px;box-shadow:0 8px 20px #11253407}
+.finder-column{min-width:158px;flex:1;max-width:280px;border-right:1px solid #e5edf1;padding:10px 7px}
+.finder-column:last-child{border-right:0}
+.finder-cell{width:100%;min-height:40px;display:flex;align-items:center;text-align:left;gap:9px;border:0;border-radius:7px;background:transparent;padding:7px 8px;color:#5e7180;font-size:12px}
+.finder-cell:hover{background:#eff5f8}
+.finder-cell.picked{background:#0d80bf;color:white}
+.finder-cell.in-path:not(.picked){background:#eaf6fc;color:#0d80bf}
+.cell-symbol{font-size:16px;opacity:.8}
+.cell-next{font-size:19px;margin-left:auto;opacity:.6}
+.finder-source-results{margin-top:22px;background:white;border:1px solid #e2e9ef;border-radius:12px;padding:16px}
+.finder-results-top{display:flex;justify-content:space-between;gap:12px;color:#3e5362;padding:0 3px 14px;font-size:12px}
+.finder-results-top small{color:#92a6b3;font-weight:500}
+.finder-source-results a{display:flex;gap:11px;align-items:center;border-top:1px solid #f0f3f5;padding:14px 4px;text-decoration:none;color:#30495a;font-size:11px}
+.finder-source-results a:hover{background:#f5f9fb}
+.source-kind{font-size:9px;letter-spacing:.07em;color:#0d80bf;font-weight:750;width:79px;flex:none}
+.source-title{font-weight:680;flex:1}
+.source-origin{color:#90a1ae;font-size:10px;max-width:35%}
+.source-open{color:#0d80bf}
+.finder-source-results>p{color:#8297a5;font-size:12px}
+.finder-inspector{border-left:1px solid #e7eef1;background:#fff;padding:28px 20px;position:relative;min-width:0}
+.inspector-heading{font-size:12px;font-weight:850;letter-spacing:.18em;color:#2a4555}
+.inspector-heading span{font-size:10px;letter-spacing:0;color:#9dabba;font-weight:400}
+.inspector-kind{border-top:1px solid #edf2f4;margin-top:26px;padding-top:23px;color:#0d80bf;letter-spacing:.15em;font-weight:750;font-size:10px}
+.finder-inspector h2{font-size:23px;letter-spacing:-.03em;margin:11px 0}
+.finder-inspector code{font-size:11px;color:#6b92ab;word-break:break-all}
+.finder-inspector p{font-size:12px;color:#8598a4;line-height:1.6}
+.finder-inspector a{display:block;font-size:12px;color:#0d80bf;text-decoration:none;margin-top:18px}
+.inspector-bottom{border-top:1px solid #e8edf0;position:absolute;bottom:28px;left:20px;right:20px;padding-top:15px;font-size:10px;color:#a3b0b8}
+@media(max-width:1060px){.finder-shell{grid-template-columns:82px minmax(0,1fr)}.finder-inspector{display:none}}
+@media(max-width:670px){.finder-shell{grid-template-columns:61px minmax(0,1fr)}.finder-stage{margin-left:4px;margin-right:4px}.finder-stage button{width:48px}.finder-center{padding:23px 8px 92px}.finder-title{align-items:flex-start;flex-direction:column}.finder-column{min-width:145px}.source-origin{display:none}}
+
+.finder-title h1,.finder-inspector h2{font-family:"SF Pro Display","SF Pro",-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif}
