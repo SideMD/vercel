@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import sideSymbol from '../../images/logo/simbolo/azul/simbolo-transparente.svg'
 import { SOURCES, sourceLink } from './sources'
 import './columns.css'
@@ -45,11 +45,15 @@ function GitLink({name}) {
   return url ? <a href={url} target="_blank" rel="noreferrer">Open verified source</a> : null
 }
 
-export default function FinderColumns({onOpenPages,onOpenWaterline,onReadSource}) {
+export default function FinderColumns({onOpenPages,onOpenWaterline,onReadSource,onReadRecord}) {
   const [path,setPath] = useState(['SIDE','VS'])
   const [selection,setSelection] = useState('Pages')
   const [query,setQuery] = useState('')
   const [showSources,setShowSources] = useState(true)
+  const [folderFiles,setFolderFiles] = useState([])
+  const [folderCount,setFolderCount] = useState(0)
+  const [folderError,setFolderError] = useState('')
+  const folderInput = useRef(null)
   const columns = useMemo(() => {
     const list = [['SIDE'],TREE.SIDE]
     for(const segment of path.slice(1)) {
@@ -63,6 +67,39 @@ export default function FinderColumns({onOpenPages,onOpenWaterline,onReadSource}
     return SOURCES.filter(item => [item.title,item.origin,item.kind,...item.terms]
       .join(' ').toLocaleLowerCase('pt-BR').includes(q))
   },[query])
+  const localResults = useMemo(() => {
+    const q = query.trim().toLocaleLowerCase('en')
+    return folderFiles.filter(entry => !q || entry.path.toLocaleLowerCase('en').includes(q)).slice(0, 120)
+  }, [folderFiles, query])
+  function chooseFolder(event) {
+    const files = Array.from(event.target.files || [])
+    event.target.value = ''
+    const accepted = files.filter(file => /(?:\.insideout|\.md|\.markdown|\.txt)$/i.test(file.name))
+      .sort((a,b) => (a.webkitRelativePath || a.name).localeCompare(b.webkitRelativePath || b.name))
+    setFolderFiles(accepted.slice(0, 3000).map(file => ({
+      file, path: file.webkitRelativePath || file.name, name: file.name,
+    })))
+    setFolderCount(accepted.length)
+    setFolderError('')
+  }
+  async function openLocalFile(entry) {
+    if (entry.file.size > 2 * 1024 * 1024) {
+      setFolderError('File exceeds the 2 MB reader limit.')
+      return
+    }
+    try {
+      const content = await entry.file.text()
+      setFolderError('')
+      onReadRecord?.({
+        ref: 'local-file:' + entry.path, title: entry.name, kind: 'INSIDEOUT',
+        original: false, detail: content, text: content,
+        date: entry.file.lastModified ? new Date(entry.file.lastModified).toISOString() : '',
+        precision: 'file modification time',
+      })
+    } catch {
+      setFolderError('Unable to read this file.')
+    }
+  }
   function select(name) {
     setSelection(name)
     const parentIndex=path.indexOf(name)
@@ -95,7 +132,11 @@ export default function FinderColumns({onOpenPages,onOpenWaterline,onReadSource}
       </nav>
       <main className="finder-center">
         <header className="finder-title"><div><small>VS / FILES</small><h1>Finder</h1><p>Universes, files and INSIDEOUTs by reference.</p></div>
-          <button type="button" onClick={onOpenPages}>Open document</button>
+          <div className="finder-title-actions">
+            <button type="button" onClick={() => folderInput.current?.click()}>Open folder</button>
+            <button type="button" onClick={onOpenPages}>Open Pages</button>
+            <input type="file" hidden ref={folderInput} webkitdirectory="" directory="" multiple onChange={chooseFolder} />
+          </div>
         </header>
         <div className="finder-search">
           <svg viewBox="0 0 24 24" width="17" height="17" stroke="currentColor" fill="none" strokeWidth="2"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg>
@@ -110,6 +151,20 @@ export default function FinderColumns({onOpenPages,onOpenWaterline,onReadSource}
             </button>)}
           </div>)}
         </section>
+        {folderCount > 0 && <section className="finder-source-results finder-local-results" aria-label="Local INSIDEOUT files">
+          <div className="finder-results-top"><strong>Local INSIDEOUTs</strong>
+            <small>{folderCount} Markdown/text files in selected folder</small></div>
+          <p className="finder-local-note">Choose a file to read it here. Local content stays on this device.</p>
+          {folderError && <p role="alert">{folderError}</p>}
+          {localResults.map(entry => <button type="button" key={entry.path} className="finder-source-row"
+            onClick={() => openLocalFile(entry)} title="Read local INSIDEOUT">
+            <span className="source-kind">LOCAL</span><span className="source-title">{entry.name}</span>
+            <span className="source-origin">{entry.path}</span><span className="source-open">Read ↗</span>
+          </button>)}
+          {localResults.length === 0 && <p>No local files match your search.</p>}
+          {folderCount > 3000 && <p>Showing the first 3,000 files. Narrow your folder to read more.</p>}
+          {localResults.length === 120 && <p>Showing 120 matches. Refine the search to see more.</p>}
+        </section>}
         {showSources&&<section className="finder-source-results" aria-label="Source results">
           <div className="finder-results-top"><strong>INSIDEOUTs / Sources</strong><small>{results.length} verified references</small></div>
           {results.map(item=><button type="button" key={item.id} className="finder-source-row"
