@@ -452,7 +452,7 @@ export default function App() {
       </header>
       {surface === 'finder' ? (
         <FinderColumns onOpenPages={() => openSurface('pages')} onOpenWaterline={() => openSurface('waterline')}
-          onReadSource={openSourceReader} />
+          onReadSource={openSourceReader} onReadRecord={setReading} />
       ) : surface === 'waterline' ? (
         <Waterline onOpenPages={() => openSurface('pages')} onReadRecord={setReading}/>
       ) : (
