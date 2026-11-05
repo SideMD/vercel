@@ -16,4 +16,6 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
+      - name: Verify Sides and TL/ATL behavior
+        run: node --test vs/dictation/tests/*.test.mjs
       - run: npm run build
