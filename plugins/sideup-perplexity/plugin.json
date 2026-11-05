@@ -1,9 +1,0 @@
-{
-  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-  "name": "sidemind-sideup",
-  "version": "0.1.0",
-  "description": "Read-only public SideMinD SideUp service status, Vercel web availability and Neon connectivity.",
-  "homepage": "https://side.md",
-  "repository": "https://github.com/SideMD/vercel",
-  "license": "UNLICENSED"
-}
