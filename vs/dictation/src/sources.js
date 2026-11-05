@@ -98,6 +98,154 @@ export const SOURCES = [
       "mm"
     ]
   }
+,
+  {
+    "id": "human-tl-sides",
+    "title": "Human TL / Sides",
+    "kind": "INSIDEOUT",
+    "date": "2026-10-25",
+    "origin": "Human source ownership and Side links",
+    "path": "other/2026/10/weeks/4/25/22/post-decision/09-hippocampus-human-tl-sides.insideout",
+    "sha": "e4688f116c5699c52f053d08bb826786b9b1e27b",
+    "terms": [
+      "side",
+      "human",
+      "tl",
+      "hippocampus",
+      "provenance"
+    ]
+  },
+  {
+    "id": "tl-atl-stl",
+    "title": "TL / ATL / STL",
+    "kind": "INSIDEOUT",
+    "date": "2026-10-25",
+    "origin": "Temporal projections and stable original pointers",
+    "path": "other/2026/10/weeks/4/25/22/post-decision/05-tl-atl-stl-synapse.insideout",
+    "sha": "e4688f116c5699c52f053d08bb826786b9b1e27b",
+    "terms": [
+      "tl",
+      "atl",
+      "stl",
+      "synapse",
+      "temporal"
+    ]
+  },
+  {
+    "id": "atl-matrix",
+    "title": "ATL matrix / 3 × 4",
+    "kind": "INSIDEOUT",
+    "date": "2026-10-27",
+    "origin": "Visual topology without inferred semantics",
+    "path": "other/2026/10/weeks/4/27/00/35/atl-matrix-3x4.insideout",
+    "sha": "e4688f116c5699c52f053d08bb826786b9b1e27b",
+    "terms": [
+      "atl",
+      "matrix",
+      "months",
+      "geometry",
+      "cognitive"
+    ]
+  },
+  {
+    "id": "finder-time-machine",
+    "title": "Finder / Time Machine",
+    "kind": "INSIDEOUT",
+    "date": "2026-10-28",
+    "origin": "Chronology and Side navigation",
+    "path": "other/2026/10/weeks/4/28/09/09/09-09-36--finder-time-machine-and-parallel-universe-desktops.insideout",
+    "sha": "e4688f116c5699c52f053d08bb826786b9b1e27b",
+    "terms": [
+      "finder",
+      "tl",
+      "atl",
+      "navigation",
+      "timeline"
+    ]
+  },
+  {
+    "id": "whole-messages",
+    "title": "Whole Messages / INTRA / EXTRA",
+    "kind": "INSIDEOUT",
+    "date": "2026-10-31",
+    "origin": "Parallel Sides and intact original messages",
+    "path": "greek/alpha-sbox/nervous/brain/neural/connectome.sideBox/SMD/sky/brain/hippocampus/2026/10/31/20/messages-whole-intra-extra-parallel-sides-atl.insideout",
+    "sha": "e4688f116c5699c52f053d08bb826786b9b1e27b",
+    "terms": [
+      "waterline",
+      "messages",
+      "intra",
+      "extra",
+      "side",
+      "atl"
+    ]
+  },
+  {
+    "id": "order-actions",
+    "title": "Order / lists and buttons",
+    "kind": "INSIDEOUT",
+    "date": "2026-10-31",
+    "origin": "Contextual action and selection interface",
+    "path": "greek/alpha-sbox/nervous/brain/neural/connectome.sideBox/SMD/sky/ecosystem/2026/10/31/interface-lists-buttons-extratification.insideout",
+    "sha": "e4688f116c5699c52f053d08bb826786b9b1e27b",
+    "terms": [
+      "order",
+      "lists",
+      "actions",
+      "buttons",
+      "selection"
+    ]
+  },
+  {
+    "id": "message-provenance",
+    "title": "WTL / message provenance",
+    "kind": "INSIDEOUT",
+    "date": "2026-11-02",
+    "origin": "Messages, Waterline, TL and checkpoints",
+    "path": "other/2026/11/02/21/08/55/04--messages-waterline-atl-stl-wtl-checkin-checkout.insideout.md",
+    "sha": "e4688f116c5699c52f053d08bb826786b9b1e27b",
+    "terms": [
+      "messages",
+      "waterline",
+      "atl",
+      "stl",
+      "wtl",
+      "provenance"
+    ]
+  },
+  {
+    "id": "waterline-contract",
+    "title": "Waterline / Side contract",
+    "kind": "INSIDEOUT",
+    "date": "2026-11-05",
+    "origin": "VS recovered Side-level Waterline and Order",
+    "path": "SID/relay/vs/2026-11-05-order-waterline-sides-research.insideout.md",
+    "sha": "e4688f116c5699c52f053d08bb826786b9b1e27b",
+    "terms": [
+      "waterline",
+      "sides",
+      "order",
+      "tl",
+      "atl",
+      "finder"
+    ]
+  },
+  {
+    "id": "vs-mm-handoff",
+    "title": "VS / shared MM handoff",
+    "kind": "SOURCE",
+    "date": "2026-11-05",
+    "origin": "SIDE-owned authorized coordination contract",
+    "path": "SDM/coordination/VS-MM.md",
+    "sha": "e4688f116c5699c52f053d08bb826786b9b1e27b",
+    "terms": [
+      "mm",
+      "side",
+      "vs",
+      "sgpu",
+      "coordination"
+    ]
+  }
 ]
 export function sourceLink(item) {
   const isFile = /\.[a-z0-9]+$/i.test(item.path)
